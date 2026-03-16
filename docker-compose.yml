@@ -1,0 +1,96 @@
+# ============================================
+# DOCKER COMPOSE CONFIGURATION
+# ============================================
+# This file defines services for both development and production environments.
+#
+# Usage:
+#   Development:  docker-compose up dev
+#   Production:   docker-compose up prod
+#   Both:         docker-compose up
+#
+# Services:
+#   - dev:  Development server with hot reloading (port 3000)
+#   - prod: Production build with Nginx (port 8080)
+
+services:
+  # ==========================================
+  # DEVELOPMENT SERVICE
+  # ==========================================
+  # Hot reloading development server
+  # Access at: http://localhost:3000
+  dev:
+    container_name: redux-learning-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot reloading
+      - .:/app
+      # Prevent node_modules from being overwritten
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3000
+    stdin_open: true
+    tty: true
+    networks:
+      - redux-network
+    # Restart policy
+    restart: unless-stopped
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ==========================================
+  # PRODUCTION SERVICE
+  # ==========================================
+  # Optimized production build served with Nginx
+  # Access at: http://localhost:8080
+  prod:
+    container_name: redux-learning-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - redux-network
+    # Restart policy
+    restart: unless-stopped
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+# ==========================================
+# NETWORKS
+# ==========================================
+# Custom network for service communication
+networks:
+  redux-network:
+    driver: bridge
+    name: redux-learning-network
+#
+# ==========================================
+# ENVIRONMENT VARIABLES (Optional)
+# ==========================================
+# Create a .env file in the project root:
+#
+# Development:
+#   NODE_ENV=development
+#   VITE_API_URL=http://localhost:3000
+#
+# Production:
+#   NODE_ENV=production
+#   VITE_API_URL=https://api.production.com

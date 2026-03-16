@@ -1,0 +1,46 @@
+# ============================================
+# REDUX LEARNING APP - DEVELOPMENT DOCKERFILE
+# ============================================
+# This Dockerfile is optimized for development with hot reloading.
+#
+# Features:
+# - Hot Module Replacement (HMR)
+# - Live reloading on code changes
+# - Source maps for debugging
+# - Volume mounting for real-time updates
+#
+# Usage:
+#   docker build -f Dockerfile.dev -t redux-learning-app:dev .
+#   docker run -p 3000:3000 -v $(pwd):/app redux-learning-app:dev
+
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies for development
+# Copying package files first for better layer caching
+COPY package*.json ./
+RUN npm install
+
+# Copy source code
+# In development, we typically mount this as a volume
+COPY . .
+
+# Expose Vite dev server port
+EXPOSE 3000
+
+# Start development server
+# --host 0.0.0.0 makes the server accessible from outside the container
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+# ============================================
+# Development Notes:
+# ============================================
+# - Use volume mounting for live code updates:
+#   docker run -v $(pwd):/app -v /app/node_modules ...
+#
+# - The -v /app/node_modules prevents the host's node_modules
+#   from overwriting the container's node_modules
+#
+# - Hot reloading works automatically with Vite
