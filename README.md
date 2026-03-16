@@ -6,7 +6,7 @@
 ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-**[Live Demo →](https://your-app.vercel.app)** <!-- TODO: replace with Vercel URL -->
+**[Live Demo →](https://redux-learning-hub.vercel.app)** <!-- TODO: replace with Vercel URL -->
 
 A Redux app I built to learn and practice state management patterns with Redux Toolkit. Each feature slice covers a different aspect of Redux — from basic synchronous actions to async thunks with API calls.
 
